@@ -98,7 +98,7 @@ build_cli() {
 ensure_venv
 
 "${PYTHON_CMD[@]}" -m pip install -q -U pip setuptools wheel
-"${PYTHON_CMD[@]}" -m pip install -q --upgrade --force-reinstall -e ".[dev]"
+"${PYTHON_CMD[@]}" -m pip install -q --upgrade --force-reinstall --only-binary=z3-solver -e ".[dev]"
 "${PYTHON_CMD[@]}" -m pip install -q --upgrade --force-reinstall "pyinstaller>=6.0"
 
 rm -rf "$ROOT/build" "$ROOT/dist"

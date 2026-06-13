@@ -10,7 +10,7 @@ python -V
 if errorlevel 1 exit /b 1
 python -m pip install -U pip setuptools wheel
 if errorlevel 1 exit /b 1
-python -m pip install ".[dev]"
+python -m pip install --only-binary=z3-solver ".[dev]"
 if errorlevel 1 exit /b 1
 python -m pip install --upgrade "pyinstaller>=6.0" tzdata
 if errorlevel 1 exit /b 1

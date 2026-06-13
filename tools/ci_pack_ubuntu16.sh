@@ -13,10 +13,19 @@ export DEBIAN_FRONTEND=noninteractive
 
 apt-get update
 apt-get install -y --no-install-recommends \
-  ca-certificates curl patchelf bzip2 binutils
+  ca-certificates curl wget patchelf bzip2 binutils
 
 MINICONDA_SH="Miniconda3-py310_23.5.2-0-Linux-x86_64.sh"
-curl -fsSL "https://repo.anaconda.com/miniconda/${MINICONDA_SH}" -o /tmp/miniconda.sh
+for attempt in 1 2 3 4 5; do
+  if wget --tries=1 -O /tmp/miniconda.sh "https://repo.anaconda.com/miniconda/${MINICONDA_SH}"; then
+    break
+  fi
+  if [ "$attempt" -eq 5 ]; then
+    echo "ERROR: failed to download Miniconda after 5 attempts" >&2
+    exit 1
+  fi
+  sleep 5
+done
 bash /tmp/miniconda.sh -b -p /opt/miniconda
 /opt/miniconda/bin/python -m venv .venv
 

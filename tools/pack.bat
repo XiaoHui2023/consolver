@@ -29,7 +29,7 @@ echo ==^> venv: %PY%
 
 "%PY%" -m pip install -q -U pip setuptools wheel
 if errorlevel 1 exit /b 1
-"%PY%" -m pip install -q --upgrade --force-reinstall -e ".[dev]"
+"%PY%" -m pip install -q --upgrade --force-reinstall --only-binary=z3-solver -e ".[dev]"
 if errorlevel 1 exit /b 1
 "%PY%" -m pip install -q --upgrade --force-reinstall "pyinstaller>=6.0"
 if errorlevel 1 exit /b 1
