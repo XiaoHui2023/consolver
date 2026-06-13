@@ -1,0 +1,8 @@
+(set-logic QF_LIA)
+(declare-const a Int)
+(declare-const b Int)
+(assert (= (+ a b) 12))
+(assert (> a b))
+(assert (= b 5))
+(check-sat)
+(get-model)
