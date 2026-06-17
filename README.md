@@ -103,9 +103,11 @@ python src solve --input-text "(check-sat)"
 
 ## 打包
 
-仓库根执行 **`tools\pack.bat`**（Windows）或 **`./tools/pack.sh`**（Linux / Git Bash），生成：
+克隆仓库后，在仓库根执行 **`tools\pack.bat`**（Windows）或 **`./tools/pack.sh`**（Linux / Git Bash），生成：
 
 - `dist/consolver` 或 `dist/consolver.exe`：单文件可执行体
 - `dist/consolver-<version>-<platform>.zip` 或 `.tar.gz`：含 README 的发布压缩包
 
-推送到 `main` 后，GitHub Actions **Release** workflow 会自动构建并更新同名 Release 附件（滚动发版，版本号见 `pyproject.toml`）。
+版本号见 `pyproject.toml` 的 `[project].version`。
+
+push 到 `main` 后，GitHub Actions 会在 **Ubuntu 16.04** 上自动打包并更新 Release（tag `v{version}`，附件为 Linux 可执行体与 `.tar.gz`）。

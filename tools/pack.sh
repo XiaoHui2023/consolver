@@ -1,15 +1,15 @@
 #!/usr/bin/env bash
-# 统一打包：使用仓库根 .venv，先 PyInstaller（主入口 spec），Linux 再 staticx 得到自解压静态包。
+# 统一打包：使用仓库根 .venv，先 PyInstaller（主入口 spec）；Linux 默认 staticx，PACK_LINUX_SKIP_STATICX=1 时跳过。
 # 每次 pip 对项目与打包工具 --force-reinstall，避免 .venv 残留旧依赖。
 # Windows 仅 PyInstaller（无 staticx）。
 #
 # 用法（仓库根）：
 #   ./tools/pack.sh [src]     Linux / macOS / Git Bash
 #   bash tools/pack.sh [src]  同上
-# 产物：dist/consolver（Linux 经 staticx）或 dist/consolver.exe（Windows）；
+# 产物：dist/consolver（Linux；CI 无 staticx）或 dist/consolver.exe（Windows）；
 #       另有 dist/consolver-<version>-<platform>.tar.gz 或 .zip（README 见 tools/bundle_release.py）。
-# Linux staticx 另需系统 patchelf（如 apt install patchelf）；macOS 跳过 staticx。
-# 兼容：单文件 ABI 取决于构建机 glibc；Ubuntu 16.04 须在 16.04（或更旧 glibc）环境构建并实测。
+# Linux staticx 另需 patchelf；PACK_LINUX_SKIP_STATICX=1 时跳过 staticx（GitHub Release CI 用）。
+# 兼容：Release 附件须在 Ubuntu 16.04（glibc 2.23）内构建；本地 pack ABI 取决于本机 glibc。
 # Windows 批处理见 tools/pack.bat。
 set -euo pipefail
 
@@ -90,7 +90,13 @@ build_cli() {
     exit 1
   fi
   case "$(uname -s 2>/dev/null || true)" in
-    Linux) apply_staticx_linux "$dist_name" ;;
+    Linux)
+      if [[ "${PACK_LINUX_SKIP_STATICX:-}" == "1" ]]; then
+        echo "完成: $ROOT/dist/${dist_name}（PACK_LINUX_SKIP_STATICX=1，跳过 staticx）"
+      else
+        apply_staticx_linux "$dist_name"
+      fi
+      ;;
     *) echo "完成: $ROOT/dist/${dist_name}（非 Linux，跳过 staticx）" ;;
   esac
 }
