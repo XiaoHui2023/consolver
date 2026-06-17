@@ -6,10 +6,10 @@
 # 用法（仓库根）：
 #   ./tools/pack.sh [src]     Linux / macOS / Git Bash
 #   bash tools/pack.sh [src]  同上
-# 产物：dist/consolver（Linux；CI 无 staticx）或 dist/consolver.exe（Windows）；
+# 产物：dist/consolver（Linux）或 dist/consolver.exe（Windows）；
 #       另有 dist/consolver-<version>-<platform>.tar.gz 或 .zip（README 见 tools/bundle_release.py）。
-# Linux staticx 另需 patchelf；PACK_LINUX_SKIP_STATICX=1 时跳过 staticx（GitHub Release CI 用）。
-# 兼容：Release 附件须在 Ubuntu 16.04（glibc 2.23）内构建；本地 pack ABI 取决于本机 glibc。
+# Linux staticx 另需 patchelf；PACK_LINUX_SKIP_STATICX=1 时跳过 staticx。
+# 本地 pack 的 Linux ABI 取决于本机 glibc；需在旧系统运行时请在对应环境内打包。
 # Windows 批处理见 tools/pack.bat。
 set -euo pipefail
 

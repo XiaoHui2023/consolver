@@ -108,6 +108,4 @@ python src solve --input-text "(check-sat)"
 - `dist/consolver` 或 `dist/consolver.exe`：单文件可执行体
 - `dist/consolver-<version>-<platform>.zip` 或 `.tar.gz`：含 README 的发布压缩包
 
-版本号见 `pyproject.toml` 的 `[project].version`。
-
-push 到 `main` 后，GitHub Actions 会在 **Ubuntu 16.04** 上自动打包并更新 Release（tag `v{version}`，附件为 Linux 可执行体与 `.tar.gz`）。
+版本号见 `pyproject.toml` 的 `[project].version`。Linux 下默认经 staticx 生成自解压静态可执行体；`PACK_LINUX_SKIP_STATICX=1` 可跳过 staticx。
