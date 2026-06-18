@@ -10,7 +10,7 @@ rm -rf .venv build dist
 
 export DEBIAN_FRONTEND=noninteractive
 apt-get update
-apt-get install -y --no-install-recommends ca-certificates wget bzip2 binutils
+apt-get install -y --no-install-recommends ca-certificates wget bzip2 binutils patchelf
 
 MINICONDA=Miniconda3-py310_23.5.2-0-Linux-x86_64.sh
 MINICONDA_URL="https://repo.anaconda.com/miniconda/${MINICONDA}"
@@ -27,5 +27,4 @@ bash "/tmp/${MINICONDA}" -b -p /opt/conda
 export PATH="/opt/conda/bin:$PATH"
 
 python -m venv .venv
-export PACK_LINUX_SKIP_STATICX=1
 bash tools/pack.sh src

@@ -35,6 +35,15 @@ def _run(binary: Path, args: list[str], cwd: Path) -> subprocess.CompletedProces
         print(f"command failed: {' '.join(cmd)}", file=sys.stderr)
         print(completed.stdout, file=sys.stderr)
         print(completed.stderr, file=sys.stderr)
+        if completed.returncode in (139, -11):
+            print(
+                "frozen executable crashed (segmentation fault). "
+                "This often indicates a staticx launcher or native library issue. "
+                "Do not skip staticx or publish Release unless the user explicitly "
+                "requested PACK_LINUX_SKIP_STATICX=1; fix the build or try "
+                "staticx --no-compress in pack.sh.",
+                file=sys.stderr,
+            )
         raise SystemExit(completed.returncode)
     return completed
 

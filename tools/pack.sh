@@ -66,7 +66,14 @@ apply_staticx_linux() {
   local tmp_out="$ROOT/dist/.${dist_name}-staticx.tmp"
   rm -f "$tmp_out"
   echo "==> staticx: $pyi_out -> $dist_name"
-  "$staticx" "$pyi_out" "$tmp_out"
+  if ! "$staticx" "$pyi_out" "$tmp_out"; then
+    rm -f "$tmp_out"
+    echo "==> staticx 失败，重试 staticx --no-compress"
+    if ! "$staticx" --no-compress "$pyi_out" "$tmp_out"; then
+      echo "错误: staticx 与 staticx --no-compress 均失败；不得跳过 staticx，请检查 patchelf、依赖库与构建日志。" >&2
+      exit 1
+    fi
+  fi
   mv -f "$tmp_out" "$pyi_out"
   chmod +x "$pyi_out"
   echo "完成: $pyi_out（staticx 自解压包；请在目标机实测）"
@@ -92,7 +99,7 @@ build_cli() {
   case "$(uname -s 2>/dev/null || true)" in
     Linux)
       if [[ "${PACK_LINUX_SKIP_STATICX:-}" == "1" ]]; then
-        echo "完成: $ROOT/dist/${dist_name}（PACK_LINUX_SKIP_STATICX=1，跳过 staticx）"
+        echo "完成: $ROOT/dist/${dist_name}（PACK_LINUX_SKIP_STATICX=1，已显式跳过 staticx）"
       else
         apply_staticx_linux "$dist_name"
       fi
