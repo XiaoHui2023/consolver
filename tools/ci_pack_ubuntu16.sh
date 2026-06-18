@@ -27,4 +27,7 @@ bash "/tmp/${MINICONDA}" -b -p /opt/conda
 export PATH="/opt/conda/bin:$PATH"
 
 python -m venv .venv
+# consolver bundles z3 native libs; staticx-wrapped onefile segfaults at runtime
+# (see python-pack-github-release/pitfalls.md). Release CI skips staticx until fixed.
+export PACK_LINUX_SKIP_STATICX=1
 bash tools/pack.sh src

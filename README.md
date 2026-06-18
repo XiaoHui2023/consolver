@@ -108,4 +108,4 @@ python src solve --input-text "(check-sat)"
 - `dist/consolver` 或 `dist/consolver.exe`：单文件可执行体
 - `dist/consolver-<version>-<platform>.zip` 或 `.tar.gz`：含 README 的发布压缩包
 
-版本号见 `pyproject.toml` 的 `[project].version`。Linux 下默认经 staticx 生成自解压静态可执行体；仅当用户明确要求时才设 `PACK_LINUX_SKIP_STATICX=1` 跳过 staticx。Release CI 同样走 staticx，且须在 example 冒烟通过后才发布。
+版本号见 `pyproject.toml` 的 `[project].version`。Linux 下 `pack.sh` 默认尝试 staticx；若产物运行时段错误，可设 `PACK_LINUX_SKIP_STATICX=1` 跳过。Release CI 当前因 z3 与 staticx 不兼容而跳过 staticx，仍须在 example 冒烟通过后才发布。
