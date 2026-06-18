@@ -37,7 +37,11 @@ _z3_lib_dir = Path(_z3_pkg.__file__).resolve().parent / "lib"
 _z3_binaries = [
     (str(path), "z3/lib")
     for path in sorted(_z3_lib_dir.iterdir())
-    if path.is_file() and path.suffix in {".dll", ".so", ".dylib"}
+    if path.is_file()
+    and (
+        path.suffix in {".dll", ".so", ".dylib"}
+        or path.name.startswith("libz3.so.")
+    )
 ]
 
 a = Analysis(

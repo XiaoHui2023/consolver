@@ -10,6 +10,7 @@ permissions:
 
 jobs:
   build-linux-ubuntu16:
+    name: Linux (Ubuntu 16.04, PyInstaller)
     runs-on: ubuntu-latest
     steps:
       - name: Checkout
@@ -21,12 +22,8 @@ jobs:
       - name: Fix dist permissions
         run: sudo chown -R "$(id -u):$(id -g)" dist
 
-      - name: Smoke frozen executable
-        run: |
-          ./dist/consolver solve example/sat.smt2 > smoke.json
-          grep -q '"status": "sat"' smoke.json
-          grep -q '"a": 7' smoke.json
-          grep -q '"b": 5' smoke.json
+      - name: Run frozen example
+        run: python3 tools/run_frozen_example.py dist/consolver
 
       - name: Upload Linux release artifacts
         uses: actions/upload-artifact@v4
@@ -38,6 +35,7 @@ jobs:
           if-no-files-found: error
 
   publish-release:
+    name: Publish GitHub Release
     needs: build-linux-ubuntu16
     if: always() && needs.build-linux-ubuntu16.result == 'success'
     runs-on: ubuntu-latest
@@ -87,6 +85,9 @@ jobs:
         with:
           tag_name: ${{ steps.version.outputs.tag }}
           name: ${{ steps.version.outputs.tag }}
+          body: |
+            Rolling release: Ubuntu 16.04 PyInstaller build from the main commit that triggered this workflow.
+            The build job runs the full example through the packaged dist/consolver executable before publishing.
           files: release-assets/**
           fail_on_unmatched_files: true
           generate_release_notes: false

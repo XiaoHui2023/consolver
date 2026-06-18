@@ -13,6 +13,7 @@ ROOT = pathlib.Path(__file__).resolve().parents[1]
 BINARY_NAMES = ("consolver",)
 RELEASE_PATHS = (
     "README.md",
+    "example",
 )
 
 
