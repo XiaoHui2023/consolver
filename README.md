@@ -108,4 +108,6 @@ python src solve --input-text "(check-sat)"
 - `dist/consolver` 或 `dist/consolver.exe`：单文件可执行体
 - `dist/consolver-<version>-<platform>.zip` 或 `.tar.gz`：含 README 的发布压缩包
 
-版本号见 `pyproject.toml` 的 `[project].version`。Linux 下 `pack.sh` 默认尝试 staticx；若产物运行时段错误，可设 `PACK_LINUX_SKIP_STATICX=1` 跳过。Release CI 当前因 z3 与 staticx 不兼容而跳过 staticx，仍须在 example 冒烟通过后才发布。
+版本号见 `pyproject.toml` 的 `[project].version`。Linux 下 `pack.sh` 默认尝试 staticx；若 staticx 或 `staticx --no-compress` 失败会直接终止打包。Release CI 在 Ubuntu 16.04 容器内完成 PyInstaller + staticx 打包，并用打包后的 `dist/consolver` 跑完整 example 冒烟后才发布。
+
+Ubuntu 16.04 / CentOS 7 这类旧 `objcopy` 环境不能使用 staticx 的 PyPI wheel bootloader，否则可能生成启动即段错误的 ELF。`pack.sh` 会强制从源码安装 staticx，并检查产物首个 `LOAD` 段地址，避免发布被旧 `objcopy` 损坏的 staticx 文件。

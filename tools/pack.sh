@@ -57,7 +57,13 @@ apply_staticx_linux() {
     echo "错误: Linux 下 staticx 需要系统命令 patchelf（例如: sudo apt install patchelf）。" >&2
     exit 1
   fi
-  "${PYTHON_CMD[@]}" -m pip install -q --upgrade --force-reinstall staticx
+  local venv_bin
+  venv_bin="$(dirname "${PYTHON_CMD[0]}")"
+  export PATH="$venv_bin:$PATH"
+  # staticx wheels embed a musl bootloader that old objcopy versions can mangle
+  # on Ubuntu 16.04/CentOS 7 class builders. Build staticx from source instead.
+  "${PYTHON_CMD[@]}" -m pip install -q --upgrade --force-reinstall scons
+  "${PYTHON_CMD[@]}" -m pip install -q --upgrade --force-reinstall --no-cache-dir --no-build-isolation --no-binary=staticx staticx
   local staticx="$ROOT/.venv/bin/staticx"
   if [[ ! -x "$staticx" ]]; then
     echo "错误: 未找到可执行的 .venv/bin/staticx。" >&2
@@ -76,6 +82,12 @@ apply_staticx_linux() {
   fi
   mv -f "$tmp_out" "$pyi_out"
   chmod +x "$pyi_out"
+  local first_load_vaddr
+  first_load_vaddr="$(readelf -Wl "$pyi_out" | awk '$1 == "LOAD" { print $3; exit }')"
+  if [[ "$first_load_vaddr" == "0x0000000000000000" ]]; then
+    echo "错误: staticx 产物 ELF 被旧 objcopy 损坏（首个 LOAD VirtAddr 为 0x0）；请确保 staticx 从源码构建，且不要使用 PyPI wheel bootloader。" >&2
+    exit 1
+  fi
   echo "完成: $pyi_out（staticx 自解压包；请在目标机实测）"
 }
 
